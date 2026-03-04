@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { serviceAppointmentsStyles } from "../assets/dummyStyles";
 import { Loader, Loader2, Search, SearchIcon,User,Phone,BadgeIndianRupee,Calendar,Clock,CheckCircle, XCircle } from "lucide-react";
-const API_BASE = "http://localhost:5000";
+const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:5000";
 // helper functions
 function formatTwo(n) {
   return String(n).padStart(2, "0");

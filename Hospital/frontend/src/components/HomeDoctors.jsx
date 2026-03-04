@@ -3,7 +3,7 @@ import { homeDoctorsStyles, iconSize } from "../assets/dummyStyles";
 import { Link } from "react-router-dom";
 import { Medal,ChevronRight } from "lucide-react";
 const HomeDoctors = ({ previewCount = 8 }) => {
-  const API_BASE = "http://localhost:5000";
+  const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:5000";
   const [doctors, setDoctors] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");

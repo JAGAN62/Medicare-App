@@ -20,7 +20,8 @@ import toast, { Toaster } from "react-hot-toast";
 import axios from "axios";
 import { useLocation } from "react-router-dom"; // ✅ Added
 
-const API_BASE = "http://localhost:5000";
+
+const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:5000";
 const API = axios.create({ baseURL: API_BASE });
 
 function pad(n) {

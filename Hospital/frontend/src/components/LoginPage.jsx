@@ -8,7 +8,7 @@ import { ArrowLeft } from "lucide-react";
 const STORAGE_kEY = "doctorToken_v1";
 
 const LoginPage = () => {
-  const API_BASE = "http://localhost:5000";
+  const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:5000";
   const [formData, setFormData] = useState({ email: "", password: "" });
   const [busy, setBusy] = useState(false);
   const navigate = useNavigate();

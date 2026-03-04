@@ -2,7 +2,7 @@ import React, { useEffect, useMemo,useState } from 'react';
 import { dashboardStyles as s} from '../assets/dummyStyles.js';
 import { BadgeIndianRupee, Calendar, CalendarRange, CheckCircle, Search, User, UserRoundCheck, Users, XCircle } from 'lucide-react';
  
-const API_BASE = "http://localhost:5000";
+const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:5000";
 const PATIENT_COUNT_API = `${API_BASE}/api/appointments/patients/count`;
 // helpet functions
 const safeNumber = (v, fallback = 0) => {
