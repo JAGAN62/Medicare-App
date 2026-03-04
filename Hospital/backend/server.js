@@ -21,9 +21,12 @@ const allowedOrigins = [
 
 app.use(cors({
     origin: function(origin, callback) {
-        // ✅ Allow no-origin requests (Render health checks, Postman)
+        // Allow all Vercel URLs + localhost
         if (!origin) return callback(null, true);
-        if (allowedOrigins.includes(origin)) {
+        if (
+            origin.includes("vercel.app") ||
+            origin.includes("localhost")
+        ) {
             return callback(null, true);
         }
         return callback(new Error("Not allowed by CORS"));
@@ -32,7 +35,6 @@ app.use(cors({
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allowedHeaders: ["Content-Type", "Authorization"]
 }));
-
 app.use(express.json({ limit: "20mb" }));
 app.use(clerkMiddleware());
 app.use(express.urlencoded({ limit: "20mb", extended: true }));
