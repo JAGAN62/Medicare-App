@@ -15,8 +15,8 @@ const allowedOrigins = [
     "http://localhost:5173",
     "http://localhost:5174",
     // ✅ Add your Vercel URLs after deploying
-    "https://medicare-frontend.vercel.app",
-    "https://medicare-admin.vercel.app",
+    "medicare-p6g63628f-mamanduru-jagans-projects.vercel.app",
+    "medicare-admin-otp5yo0af-mamanduru-jagans-projects.vercel.app",
 ]
 
 app.use(cors({
