@@ -1,8 +1,24 @@
-import React, { useRef, useState,useCallback,useLayoutEffect,useEffect } from "react";
+import React, {
+  useRef,
+  useState,
+  useCallback,
+  useLayoutEffect,
+  useEffect,
+} from "react";
 import { navbarStyles as ns } from "../assets/dummyStyles";
 import logoImg from "../assets/logo.png";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
-import {Calendar, Grid, Home, List, Menu, PlusSquare, UserPlus, Users, X} from "lucide-react";
+import {
+  Calendar,
+  Grid,
+  Home,
+  List,
+  Menu,
+  PlusSquare,
+  UserPlus,
+  Users,
+  X,
+} from "lucide-react";
 import { useAuth, useClerk, useUser } from "@clerk/clerk-react";
 const Navbar = () => {
   const [open, setOpen] = useState(false);
@@ -12,11 +28,11 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const clerk = useClerk?.();
-  const {getToken,isLoaded : authLoaded} = useAuth();
-  const {isSignedIn ,user,isLoaded:userLoaded} = useUser();
+  const { getToken, isLoaded: authLoaded } = useAuth();
+  const { isSignedIn, user, isLoaded: userLoaded } = useUser();
 
   // sliding active indicator
-    const moveIndicator = useCallback(() => {
+  const moveIndicator = useCallback(() => {
     const container = navInnerRef.current;
     const ind = indicatorRef.current;
     if (!container || !ind) return;
@@ -82,66 +98,65 @@ const Navbar = () => {
   // when user signed in fetch a token and svsse it in local storeage
   useEffect(() => {
     let mounted = true;
-    const storeToken = async() => {
-      if(!authLoaded || !userLoaded) return;
-      if(!isSignedIn) {
-        try{
-          localStorage.removeItem("clerk_token")
-        }catch(err){
-          
-        }
-        return ;
-        }
-        try{
-        if(getToken){
+    const storeToken = async () => {
+      if (!authLoaded || !userLoaded) return;
+      if (!isSignedIn) {
+        try {
+          localStorage.removeItem("clerk_token");
+        } catch (err) {}
+        return;
+      }
+      try {
+        if (getToken) {
           const token = await getToken();
-          if(!mounted) return;
-          if(token){
-            try{
-              localStorage.setItem("clerk_token",token);
-            }catch(err){
-              console.warn('failed to write clerk token from localstorage',err)
+          if (!mounted) return;
+          if (token) {
+            try {
+              localStorage.setItem("clerk_token", token);
+            } catch (err) {
+              console.warn(
+                "failed to write clerk token from localstorage",
+                err,
+              );
             }
           }
         }
-        }catch(err){
-          console.warn('could not retrive clerk token',err)
-        }
-    }
+      } catch (err) {
+        console.warn("could not retrive clerk token", err);
+      }
+    };
     storeToken();
     return () => {
       mounted = false;
-    }
-  },[isSignedIn,authLoaded,userLoaded,getToken])
+    };
+  }, [isSignedIn, authLoaded, userLoaded, getToken]);
 
-  const handleOpenSignIn = ()=> {
-    if(!clerk || !clerk.openSignIn){
-      console.warn("clerk is not available")
+  const handleOpenSignIn = () => {
+    if (!clerk || !clerk.openSignIn) {
+      console.warn("clerk is not available");
       return;
     }
     clerk.openSignIn();
-    navigate('/h');
+    navigate("/h");
   };
 
   // to signout
   const handleSignOut = async () => {
-     if(!clerk || !clerk.signOut){
-      console.warn("clerk is not available")
+    if (!clerk || !clerk.signOut) {
+      console.warn("clerk is not available");
       return;
     }
     try {
       await clerk.signOut();
     } catch (error) {
-      console.error("sign out failed!",error)
-    } finally{
-      try{
+      console.error("sign out failed!", error);
+    } finally {
+      try {
         localStorage.removeItem("clerk_token");
-      }catch(err){
-
-      }
-      navigate('/')
+      } catch (err) {}
+      navigate("/");
     }
-  }
+  };
 
   return (
     <>
@@ -216,19 +231,27 @@ const Navbar = () => {
             <div className={ns.rightContainer}>
               {/* auth */}
               {isSignedIn ? (
-                <button onClick={handleSignOut} className={ns.signOutButton + " " + ns.cursorPointer}>
+                <button
+                  onClick={handleSignOut}
+                  className={ns.signOutButton + " " + ns.cursorPointer}
+                >
                   sign Out
                 </button>
-              ):(
+              ) : (
                 <div className="hidden lg:flex items-center gap-2">
-                  <button onClick={handleOpenSignIn}
-                  className={ns.loginButton + " " + ns.cursorPointer}>
+                  <button
+                    onClick={handleOpenSignIn}
+                    className={ns.loginButton + " " + ns.cursorPointer}
+                  >
                     Login
                   </button>
                 </div>
-              )} 
+              )}
               {/*mobile toggle   */}
-              <button className={ns.mobileMenuButton} onClick={() => setOpen((v) => !v)}>
+              <button
+                className={ns.mobileMenuButton}
+                onClick={() => setOpen((v) => !v)}
+              >
                 {open ? <X size={18} /> : <Menu size={18} />}
               </button>
             </div>
@@ -237,79 +260,89 @@ const Navbar = () => {
           {open && (
             <div className={ns.mobileOverlay} id="mobile-menu">
               <div className={ns.mobileMenuInner}>
+                <button
+                  onClick={() => setOpen(false)}
+                  className="absolute top-4 right-4 z-50"
+                >
+                  <X size={24} />
+                </button>
                 <MobileItem
-                to="/h"
-                label="Dashboard"
-                icon={<Home size={16} />}
-                onClick={() => setOpen(false)}
-              />
+                  to="/h"
+                  label="Dashboard"
+                  icon={<Home size={16} />}
+                  onClick={() => setOpen(false)}
+                />
 
-              <MobileItem
-                to="/add"
-                label="Add Doctor"
-                icon={<UserPlus size={16} />}
-                onClick={() => setOpen(false)}
-              />
-              <MobileItem
-                to="/list"
-                label="List Doctors"
-                icon={<Users size={16} />}
-                onClick={() => setOpen(false)}
-              />
-              <MobileItem
-                to="/appointments"
-                label="Appointments"
-                icon={<Calendar size={16} />}
-                onClick={() => setOpen(false)}
-              />
+                <MobileItem
+                  to="/add"
+                  label="Add Doctor"
+                  icon={<UserPlus size={16} />}
+                  onClick={() => setOpen(false)}
+                />
+                <MobileItem
+                  to="/list"
+                  label="List Doctors"
+                  icon={<Users size={16} />}
+                  onClick={() => setOpen(false)}
+                />
+                <MobileItem
+                  to="/appointments"
+                  label="Appointments"
+                  icon={<Calendar size={16} />}
+                  onClick={() => setOpen(false)}
+                />
 
-              <MobileItem
-                to="/service-dashboard"
-                label="Service Dashboard"
-                icon={<Grid size={16} />}
-                onClick={() => setOpen(false)}
-              />
-              <MobileItem
-                to="/add-service"
-                label="Add Service"
-                icon={<PlusSquare size={16} />}
-                onClick={() => setOpen(false)}
-              />
-              <MobileItem
-                to="/list-service"
-                label="List Services"
-                icon={<List size={16} />}
-                onClick={() => setOpen(false)}
-              />
-              <MobileItem
-                to="/service-appointments"
-                label="Service Appointments"
-                icon={<Calendar size={16} />}
-                onClick={() => setOpen(false)}
-              />
-              <div className={ns.mobileAuthContainer}>
+                <MobileItem
+                  to="/service-dashboard"
+                  label="Service Dashboard"
+                  icon={<Grid size={16} />}
+                  onClick={() => setOpen(false)}
+                />
+                <MobileItem
+                  to="/add-service"
+                  label="Add Service"
+                  icon={<PlusSquare size={16} />}
+                  onClick={() => setOpen(false)}
+                />
+                <MobileItem
+                  to="/list-service"
+                  label="List Services"
+                  icon={<List size={16} />}
+                  onClick={() => setOpen(false)}
+                />
+                <MobileItem
+                  to="/service-appointments"
+                  label="Service Appointments"
+                  icon={<Calendar size={16} />}
+                  onClick={() => setOpen(false)}
+                />
+                <div className={ns.mobileAuthContainer}>
                   {isSignedIn ? (
-                    <button onClick={() => {
-                      handleSignOut();
-                      setOpen(false);
-                    }} className={ns.mobileSignOutButton}>
+                    <button
+                      onClick={() => {
+                        handleSignOut();
+                        setOpen(false);
+                      }}
+                      className={ns.mobileSignOutButton}
+                    >
                       Sign Out
                     </button>
-                  ):(
+                  ) : (
                     <div className="space-y-2">
-                        <button
+                      <button
                         onClick={() => {
                           handleOpenSignIn();
                           setOpen(false);
                         }}
-                        className={ns.mobileLoginButton + " " + ns.cursorPointer}
-                        >
-                          Login
-                        </button>
+                        className={
+                          ns.mobileLoginButton + " " + ns.cursorPointer
+                        }
+                      >
+                        Login
+                      </button>
                     </div>
-
                   )}
-              </div>
+                </div>
               </div>
             </div>
           )}
@@ -321,29 +354,36 @@ const Navbar = () => {
 
 export default Navbar;
 
-function CenterNavItem ({to,icon,label}){
+function CenterNavItem({ to, icon, label }) {
   return (
-    <NavLink to={to} end className={({isActive}) =>
-      `nav-item ${isActive? "active":""} ${ns.centerNavItemBase} ${
-        isActive ? ns.centerNavItemActive : ns.centerNavItemInactive
-      }`
-      }>
-        <span>{icon}</span>
-        <span className="font-medium">{label}</span>
-      </NavLink>
-
-  )
-}
-
-const MobileItem = ({to,icon,label,onClick}) => {
-  return (
-    <NavLink to={to} onClick={onClick} className={({isActive}) => 
-    `${ns.mobileItemBase} ${
-      isActive ? ns.mobileItemActive : ns.mobileItemInactive
-    }`
-    }>
-  {icon}
-  <span className="font-medium text-sm">{label}</span>
+    <NavLink
+      to={to}
+      end
+      className={({ isActive }) =>
+        `nav-item ${isActive ? "active" : ""} ${ns.centerNavItemBase} ${
+          isActive ? ns.centerNavItemActive : ns.centerNavItemInactive
+        }`
+      }
+    >
+      <span>{icon}</span>
+      <span className="font-medium">{label}</span>
     </NavLink>
-  )
+  );
 }
+
+const MobileItem = ({ to, icon, label, onClick }) => {
+  return (
+    <NavLink
+      to={to}
+      onClick={onClick}
+      className={({ isActive }) =>
+        `${ns.mobileItemBase} ${
+          isActive ? ns.mobileItemActive : ns.mobileItemInactive
+        }`
+      }
+    >
+      {icon}
+      <span className="font-medium text-sm">{label}</span>
+    </NavLink>
+  );
+};

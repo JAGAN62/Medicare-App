@@ -483,7 +483,7 @@ const AddPage = () => {
             }
           >
             <option value="Available">Available</option>
-            <option value="Unavailable">Unavailablel</option>
+            <option value="Unavailable">Unavailable</option>
           </select>
           <textarea
             name=""
